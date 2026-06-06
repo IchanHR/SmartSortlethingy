@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartSortle - Spot the Difference. Classify the Change.</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/Draggable.min.js"></script>
+</head>
+<body>
+    <!-- START SCREEN -->
+    <div id="screen-start" class="screen active">
+        <div class="start-container">
+            <div class="logo">
+                <h1 class="game-title">SmartSortle</h1>
+                <p class="tagline">Spot the difference. Classify the change.</p>
+            </div>
+            <button id="btn-start" class="btn btn-primary">START GAME</button>
+            <div class="level-select">
+                <h3>Select Level</h3>
+                <div class="level-grid" id="level-grid"></div>
+            </div>
+            <div class="high-score-display" id="high-score-display"></div>
+        </div>
+    </div>
+
+    <!-- GAME SCREEN -->
+    <div id="screen-game" class="screen">
+        <div class="game-header">
+            <button class="btn-exit" id="btn-exit">Exit</button>
+            <div class="round-info" id="round-info">Round 1 of 5</div>
+            <div class="score-display" id="score-display">Score: 0 / 0</div>
+        </div>
+
+        <!-- Phase 1: Observe first image -->
+        <div id="phase-observe" class="game-phase">
+            <p class="phase-instruction">Observe carefully!</p>
+            <div class="observe-layout">
+                <div class="image-container" id="image-original">
+                    <div class="scene" id="scene-original"></div>
+                    <span class="image-label">Scene A (Original)</span>
+                </div>
+                <div class="timer-box" id="timer-box">
+                    <span class="timer-label">TIMER</span>
+                    <span class="timer-value" id="timer-value">10</span>
+                    <span class="timer-sub">seconds left</span>
+                    <div class="timer-bar-container">
+                        <div class="timer-bar" id="timer-bar"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Phase 2: Compare & classify -->
+        <div id="phase-compare" class="game-phase">
+            <p class="phase-instruction">Drag the correct category onto the change!</p>
+            <div class="compare-layout">
+                <div class="images-row">
+                    <div class="image-container image-container-changed compare-single">
+                        <div class="scene" id="scene-b"></div>
+                        <div class="drop-zone-wrong" id="drop-zone-wrong"></div>
+                        <div class="hitbox" id="hitbox"></div>
+                        <span class="image-label">What changed?</span>
+                    </div>
+                </div>
+                <div class="categories-panel" id="categories-panel"></div>
+            </div>
+        </div>
+
+        <!-- Phase 3: Feedback -->
+        <div id="phase-feedback" class="game-phase">
+            <div class="feedback-content" id="feedback-content"></div>
+            <button id="btn-next" class="btn btn-primary">Next Round</button>
+        </div>
+    </div>
+
+    <!-- END SCREEN -->
+    <div id="screen-end" class="screen">
+        <div class="end-container">
+            <div class="end-card">
+                <h2>Session Complete!</h2>
+                <div class="end-score">
+                    <span class="end-score-value" id="end-score-value">0 / 5</span>
+                </div>
+                <div class="end-stats">
+                    <span id="end-accuracy">0% Accuracy</span>
+                    <span id="end-avg-time">Avg. 0.0s per round</span>
+                </div>
+                <div class="end-buttons">
+                    <button id="btn-play-again" class="btn btn-primary">Play Again</button>
+                    <button id="btn-main-menu" class="btn btn-secondary">Main Menu</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/levels.js"></script>
+    <script src="js/audio.js"></script>
+    <script src="js/game.js"></script>
+</body>
+</html>
