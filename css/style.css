@@ -27,11 +27,11 @@ body {
 
 /* ============ BUTTONS ============ */
 .btn {
-    padding: 14px 36px;
+    padding: 16px 44px;
     border: none;
     border-radius: 12px;
     font-family: inherit;
-    font-size: 1rem;
+    font-size: 1.1rem;
     font-weight: 700;
     cursor: pointer;
     transition: transform 0.15s, box-shadow 0.15s;
@@ -64,7 +64,7 @@ body {
     padding: 40px 20px;
 }
 .game-title {
-    font-size: 3.5rem;
+    font-size: 4.5rem;
     font-weight: 800;
     background: linear-gradient(135deg, #3b82f6, #8b5cf6);
     -webkit-background-clip: text;
@@ -74,13 +74,13 @@ body {
 }
 .tagline {
     color: #94a3b8;
-    font-size: 1.1rem;
-    margin-bottom: 32px;
+    font-size: 1.3rem;
+    margin-bottom: 40px;
 }
 #btn-start {
-    font-size: 1.2rem;
-    padding: 16px 48px;
-    margin-bottom: 40px;
+    font-size: 1.4rem;
+    padding: 20px 64px;
+    margin-bottom: 48px;
 }
 .level-select h3 {
     font-size: 1rem;
@@ -92,19 +92,19 @@ body {
 .level-grid {
     display: grid;
     grid-template-columns: repeat(6, 1fr);
-    gap: 10px;
-    max-width: 400px;
+    gap: 14px;
+    max-width: 500px;
     margin: 0 auto;
 }
 .level-btn {
-    width: 56px;
-    height: 56px;
-    border-radius: 12px;
+    width: 68px;
+    height: 68px;
+    border-radius: 14px;
     border: 2px solid #334155;
     background: #1e293b;
     color: #e2e8f0;
     font-weight: 700;
-    font-size: 1.1rem;
+    font-size: 1.25rem;
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -149,14 +149,15 @@ body {
     justify-content: space-between;
     align-items: center;
     width: 100%;
-    max-width: 900px;
-    margin: 0 auto 16px;
-    padding: 12px 20px;
+    max-width: 1200px;
+    margin: 0 auto 20px;
+    padding: 16px 28px;
     background: #1e293b;
     border-radius: 12px;
 }
 .round-info {
     font-weight: 600;
+    font-size: 1.1rem;
     color: #94a3b8;
 }
 .btn-exit {
@@ -178,13 +179,13 @@ body {
 .score-display {
     font-weight: 700;
     color: #3b82f6;
-    font-size: 1.1rem;
+    font-size: 1.25rem;
 }
 
 .game-phase {
     display: none;
     width: 100%;
-    max-width: 900px;
+    max-width: 1200px;
     margin: 0 auto;
 }
 .game-phase.active {
@@ -193,16 +194,16 @@ body {
 
 .phase-instruction {
     text-align: center;
-    font-size: 1.1rem;
+    font-size: 1.3rem;
     font-weight: 600;
     color: #f97316;
-    margin-bottom: 20px;
+    margin-bottom: 24px;
 }
 
 /* ---- Observe phase ---- */
 .observe-layout {
     display: flex;
-    gap: 24px;
+    gap: 40px;
     align-items: center;
     justify-content: center;
 }
@@ -212,8 +213,8 @@ body {
     border: 2px solid #334155;
     border-radius: 16px;
     overflow: hidden;
-    width: 360px;
-    height: 280px;
+    width: 640px;
+    height: 480px;
 }
 .image-label {
     display: block;
@@ -227,22 +228,22 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 4px;
-    padding: 24px;
+    gap: 8px;
+    padding: 32px;
     background: #1e293b;
     border: 2px solid #f97316;
     border-radius: 16px;
-    min-width: 120px;
+    min-width: 160px;
 }
 .timer-label {
-    font-size: 0.75rem;
+    font-size: 0.9rem;
     font-weight: 700;
     color: #f97316;
     text-transform: uppercase;
     letter-spacing: 2px;
 }
 .timer-value {
-    font-size: 3rem;
+    font-size: 4rem;
     font-weight: 800;
     color: #f97316;
     line-height: 1;
@@ -301,11 +302,11 @@ body {
     position: relative;
 }
 .compare-single {
-    width: 520px;
-    height: 380px;
+    width: 800px;
+    height: 560px;
 }
 .compare-single .scene {
-    height: 340px;
+    height: 520px;
 }
 
 /* Drop zones */
@@ -348,12 +349,12 @@ body {
     flex-wrap: wrap;
 }
 .category-card {
-    padding: 14px 28px;
+    padding: 18px 36px;
     background: #1e293b;
     border: 2px solid #475569;
     border-radius: 12px;
     font-family: inherit;
-    font-size: 1rem;
+    font-size: 1.15rem;
     font-weight: 600;
     color: #e2e8f0;
     cursor: grab;
@@ -388,11 +389,11 @@ body {
     margin-bottom: 24px;
 }
 .feedback-icon {
-    font-size: 4rem;
-    margin-bottom: 12px;
+    font-size: 5rem;
+    margin-bottom: 16px;
 }
 .feedback-text {
-    font-size: 1.5rem;
+    font-size: 2rem;
     font-weight: 700;
 }
 .feedback-text.correct {
@@ -403,8 +404,8 @@ body {
 }
 .feedback-detail {
     color: #94a3b8;
-    margin-top: 8px;
-    font-size: 1rem;
+    margin-top: 12px;
+    font-size: 1.15rem;
 }
 #btn-next {
     display: block;
@@ -414,7 +415,7 @@ body {
 /* ============ SCENE RENDERING ============ */
 .scene {
     width: 100%;
-    height: 240px;
+    height: 440px;
     position: relative;
     overflow: hidden;
     display: flex;
@@ -439,13 +440,13 @@ body {
 .end-card {
     background: #1e293b;
     border-radius: 24px;
-    padding: 48px 40px;
-    max-width: 400px;
+    padding: 56px 52px;
+    max-width: 520px;
     margin: 0 auto;
     border: 2px solid #334155;
 }
 .end-card h2 {
-    font-size: 2rem;
+    font-size: 2.5rem;
     margin-bottom: 24px;
     background: linear-gradient(135deg, #3b82f6, #8b5cf6);
     -webkit-background-clip: text;
@@ -456,7 +457,7 @@ body {
     margin-bottom: 16px;
 }
 .end-score-value {
-    font-size: 3rem;
+    font-size: 3.5rem;
     font-weight: 800;
     color: #f8fafc;
 }
@@ -469,10 +470,10 @@ body {
 .end-stats {
     display: flex;
     flex-direction: column;
-    gap: 4px;
-    margin-bottom: 32px;
+    gap: 8px;
+    margin-bottom: 36px;
     color: #94a3b8;
-    font-size: 0.95rem;
+    font-size: 1.1rem;
 }
 .end-buttons {
     display: flex;
@@ -481,11 +482,20 @@ body {
 }
 
 /* ============ RESPONSIVE ============ */
-@media (max-width: 800px) {
+@media (max-width: 900px) {
     .game-title { font-size: 2.5rem; }
     .observe-layout { flex-direction: column; }
     .images-row { flex-direction: column; }
-    .image-container { width: 100%; max-width: 360px; }
-    .level-grid { grid-template-columns: repeat(3, 1fr); }
+    .image-container { width: 100%; max-width: 90vw; height: auto; }
+    .image-container .scene { height: 50vw; }
+    .compare-single { width: 90vw; height: auto; }
+    .compare-single .scene { height: 60vw; }
+    .level-grid { grid-template-columns: repeat(3, 1fr); max-width: 300px; }
+    .level-btn { width: 56px; height: 56px; font-size: 1.1rem; }
     .vs-badge { transform: rotate(90deg); }
+    .category-card { padding: 12px 20px; font-size: 0.95rem; }
+    .timer-box { min-width: 100px; padding: 20px; }
+    .timer-value { font-size: 2.5rem; }
+    .game-header { max-width: 100%; }
+    .game-phase { max-width: 100%; }
 }
