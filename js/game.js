@@ -35,7 +35,8 @@
     function renderStartScreen() {
         const grid = $("#level-grid");
         grid.innerHTML = "";
-        for (let i = 1; i <= 6; i++) {
+        const totalLevels = LEVELS.length;
+        for (let i = 1; i <= totalLevels; i++) {
             const btn = document.createElement("button");
             btn.className = "level-btn";
             btn.textContent = i;
@@ -54,36 +55,23 @@
         const hs = $("#high-score-display");
         const entries = Object.entries(highScores);
         if (entries.length > 0) {
-            hs.textContent = "High Scores: " + entries.map(([k, v]) => `L${k}: ${v}/5`).join(" | ");
+            hs.textContent = "High Scores: " + entries.map(([k, v]) => {
+                const lvl = LEVELS[parseInt(k) - 1];
+                const total = lvl ? lvl.rounds.length : "?";
+                return `L${k}: ${v}/${total}`;
+            }).join(" | ");
         }
     }
 
     // ============ SCENE RENDERING ============
     function renderScene(container, round, useChanged) {
         container.innerHTML = "";
-        const bg = document.createElement("div");
-        bg.className = "scene-bg";
-        bg.style.background = round.sceneBg;
-        container.appendChild(bg);
-
-        round.objects.forEach(obj => {
-            const el = document.createElement("div");
-            el.className = "scene-object";
-            el.textContent = obj.emoji;
-            el.style.left = obj.x;
-            el.style.top = obj.y;
-            el.style.fontSize = obj.size || "2.5rem";
-            container.appendChild(el);
-        });
-
-        const target = useChanged ? round.changed : round.original;
-        const el = document.createElement("div");
-        el.className = "scene-object";
-        el.textContent = target.emoji;
-        el.style.left = target.x;
-        el.style.top = target.y;
-        el.style.fontSize = target.size || "2.5rem";
-        container.appendChild(el);
+        const img = document.createElement("img");
+        img.className = "scene-img";
+        img.src = useChanged ? round.changedImg : round.originalImg;
+        img.alt = useChanged ? "Changed scene" : "Original scene";
+        img.draggable = false;
+        container.appendChild(img);
     }
 
     // ============ GAME FLOW ============
@@ -317,30 +305,45 @@
     function endGame() {
         const level = LEVELS[selectedLevel];
         const total = level.rounds.length;
-        const accuracy = total > 0 ? Math.round(score / total * 100) : 0;
+        const lvl = selectedLevel + 1;
         const avgTime = responseTimes.length > 0
             ? (responseTimes.reduce((a, b) => a + b, 0) / responseTimes.length).toFixed(1)
             : "0.0";
 
-        $("#end-score-value").textContent = `${score} / ${total}`;
-        $("#end-accuracy").textContent = `${accuracy}% Accuracy`;
-        $("#end-avg-time").textContent = `Avg. ${avgTime}s per round`;
+        $("#end-heading").textContent = score >= 1 ? "Level Complete!" : "Try Again!";
+        const scoreEl = $("#end-score-value");
+        scoreEl.textContent = score >= 1 ? "Correct!" : "Wrong!";
+        scoreEl.className = "end-score-value " + (score >= 1 ? "correct" : "wrong");
+        $("#end-accuracy").textContent = `Level ${lvl}: ${level.name}`;
+        $("#end-avg-time").textContent = `Response time: ${avgTime}s`;
 
         // Save high score
-        const lvl = selectedLevel + 1;
         if (!highScores[lvl] || score > highScores[lvl]) {
             highScores[lvl] = score;
             localStorage.setItem("ss_highscores", JSON.stringify(highScores));
         }
 
         // Unlock next level
-        if (score >= 3 && lvl < 6 && !unlockedLevels.includes(lvl + 1)) {
+        const minToUnlock = Math.ceil(total / 2);
+        if (score >= minToUnlock && lvl < LEVELS.length && !unlockedLevels.includes(lvl + 1)) {
             unlockedLevels.push(lvl + 1);
             localStorage.setItem("ss_unlocked", JSON.stringify(unlockedLevels));
         }
 
+        // Show/hide Next Level button
+        const nextLevelBtn = $("#btn-next-level");
+        if (score >= minToUnlock && lvl < LEVELS.length) {
+            nextLevelBtn.style.display = "inline-block";
+        } else {
+            nextLevelBtn.style.display = "none";
+        }
+
         showScreen(screenEnd);
-        AudioManager.levelComplete();
+        if (score >= 1) {
+            AudioManager.levelComplete();
+        } else {
+            AudioManager.incorrect();
+        }
         gsap.fromTo(".end-card", { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.5 });
     }
 
@@ -357,6 +360,14 @@
 
     $("#btn-play-again").addEventListener("click", () => {
         AudioManager.click();
+        startGame();
+    });
+
+    $("#btn-next-level").addEventListener("click", () => {
+        AudioManager.click();
+        if (selectedLevel < LEVELS.length - 1) {
+            selectedLevel++;
+        }
         startGame();
     });
 
