@@ -37,9 +37,10 @@
         grid.innerHTML = "";
         const totalLevels = LEVELS.length;
         for (let i = 1; i <= totalLevels; i++) {
+            const lvl = LEVELS[i - 1];
             const btn = document.createElement("button");
             btn.className = "level-btn";
-            btn.textContent = i;
+            btn.innerHTML = `<span class="level-num">${i}</span><span class="level-name">${lvl.name}</span>`;
             const unlocked = unlockedLevels.includes(i);
             if (!unlocked) btn.classList.add("locked");
             if (i === selectedLevel + 1) btn.classList.add("selected");
@@ -52,14 +53,22 @@
             grid.appendChild(btn);
         }
 
+        // Level description
+        const descEl = $("#level-description");
+        const sel = LEVELS[selectedLevel];
+        descEl.innerHTML = `<strong>${sel.name}</strong> &mdash; ${sel.description} &bull; ${sel.rounds.length} rounds &bull; ${sel.timerSeconds}s timer`;
+
+        // High scores
         const hs = $("#high-score-display");
         const entries = Object.entries(highScores);
         if (entries.length > 0) {
-            hs.textContent = "High Scores: " + entries.map(([k, v]) => {
+            hs.innerHTML = "<strong>Best Scores:</strong> " + entries.map(([k, v]) => {
                 const lvl = LEVELS[parseInt(k) - 1];
                 const total = lvl ? lvl.rounds.length : "?";
                 return `L${k}: ${v}/${total}`;
             }).join(" | ");
+        } else {
+            hs.textContent = "";
         }
     }
 
@@ -91,16 +100,13 @@
         $("#round-info").textContent = `Round ${currentRound + 1} of ${level.rounds.length}`;
         updateScore();
 
-        // Render first image
         renderScene($("#scene-original"), round, false);
 
         showPhase("#phase-observe");
 
-        // Animate in
         gsap.fromTo("#image-original", { opacity: 0, x: -30 }, { opacity: 1, x: 0, duration: 0.5 });
         gsap.fromTo("#timer-box", { opacity: 0, scale: 0.8 }, { opacity: 1, scale: 1, duration: 0.4, delay: 0.2 });
 
-        // Start timer
         timeLeft = level.timerSeconds;
         $("#timer-value").textContent = timeLeft;
         $("#timer-value").classList.remove("urgent");
@@ -135,7 +141,6 @@
 
         renderScene($("#scene-b"), round, true);
 
-        // Set hitbox
         const hitbox = $("#hitbox");
         hitbox.style.left = round.hitbox.x;
         hitbox.style.top = round.hitbox.y;
@@ -144,7 +149,6 @@
         hitbox.className = "hitbox";
         $("#drop-zone-wrong").className = "drop-zone-wrong";
 
-        // Render categories
         const panel = $("#categories-panel");
         panel.innerHTML = "";
         destroyDraggables();
@@ -159,21 +163,17 @@
 
         showPhase("#phase-compare");
 
-        // Animate
         gsap.fromTo("#scene-b", { opacity: 0, scale: 0.95 }, { opacity: 1, scale: 1, duration: 0.4 });
         gsap.fromTo(".category-card", { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.3, stagger: 0.08, delay: 0.3 });
 
         roundStartTime = Date.now();
 
-        // Setup drag
         setTimeout(setupDragAndDrop, 500);
     }
 
     function setupDragAndDrop() {
         const hitbox = $("#hitbox");
         const cards = $$(".category-card");
-
-        // Hover hint on hitbox
         const wrongZone = $("#drop-zone-wrong");
 
         cards.forEach(card => {
@@ -248,7 +248,6 @@
             AudioManager.incorrect();
         }
 
-        // Disable all cards
         $$(".category-card").forEach(c => {
             if (c !== card) {
                 c.style.opacity = "0.4";
@@ -270,7 +269,7 @@
         content.innerHTML = `
             <div class="feedback-icon">${isCorrect ? "✅" : "❌"}</div>
             <div class="feedback-text ${isCorrect ? "correct" : "incorrect"}">
-                ${isCorrect ? "Correct!" : "Try Again"}
+                ${isCorrect ? "Correct!" : "Incorrect"}
             </div>
             <div class="feedback-detail">
                 ${isCorrect
@@ -298,7 +297,6 @@
     }
 
     function updateScore() {
-        const level = LEVELS[selectedLevel];
         $("#score-display").textContent = `Score: ${score} / ${totalAnswered}`;
     }
 
@@ -306,31 +304,31 @@
         const level = LEVELS[selectedLevel];
         const total = level.rounds.length;
         const lvl = selectedLevel + 1;
+        const accuracy = total > 0 ? Math.round((score / total) * 100) : 0;
         const avgTime = responseTimes.length > 0
             ? (responseTimes.reduce((a, b) => a + b, 0) / responseTimes.length).toFixed(1)
             : "0.0";
 
-        $("#end-heading").textContent = score >= 1 ? "Level Complete!" : "Try Again!";
-        const scoreEl = $("#end-score-value");
-        scoreEl.textContent = score >= 1 ? "Correct!" : "Wrong!";
-        scoreEl.className = "end-score-value " + (score >= 1 ? "correct" : "wrong");
-        $("#end-accuracy").textContent = `Level ${lvl}: ${level.name}`;
-        $("#end-avg-time").textContent = `Response time: ${avgTime}s`;
+        const passed = score >= Math.ceil(total / 2);
 
-        // Save high score
+        $("#end-heading").textContent = passed ? "Level Complete!" : "Try Again!";
+        const scoreEl = $("#end-score-value");
+        scoreEl.textContent = `${score} / ${total}`;
+        scoreEl.className = "end-score-value " + (passed ? "correct" : "wrong");
+        $("#end-accuracy").textContent = `${accuracy}% Accuracy`;
+        $("#end-avg-time").textContent = `Avg. ${avgTime}s per round`;
+
         if (!highScores[lvl] || score > highScores[lvl]) {
             highScores[lvl] = score;
             localStorage.setItem("ss_highscores", JSON.stringify(highScores));
         }
 
-        // Unlock next level
         const minToUnlock = Math.ceil(total / 2);
         if (score >= minToUnlock && lvl < LEVELS.length && !unlockedLevels.includes(lvl + 1)) {
             unlockedLevels.push(lvl + 1);
             localStorage.setItem("ss_unlocked", JSON.stringify(unlockedLevels));
         }
 
-        // Show/hide Next Level button
         const nextLevelBtn = $("#btn-next-level");
         if (score >= minToUnlock && lvl < LEVELS.length) {
             nextLevelBtn.style.display = "inline-block";
@@ -339,7 +337,7 @@
         }
 
         showScreen(screenEnd);
-        if (score >= 1) {
+        if (passed) {
             AudioManager.levelComplete();
         } else {
             AudioManager.incorrect();
