@@ -14,6 +14,7 @@
     let unlockedLevels = JSON.parse(localStorage.getItem("ss_unlocked") || "[1]");
     let highScores = JSON.parse(localStorage.getItem("ss_highscores") || "{}");
     let draggables = [];
+    let activeHitbox = null;
 
     // Elements
     const screenStart = $("#screen-start");
@@ -53,12 +54,10 @@
             grid.appendChild(btn);
         }
 
-        // Level description
         const descEl = $("#level-description");
         const sel = LEVELS[selectedLevel];
-        descEl.innerHTML = `<strong>${sel.name}</strong> &mdash; ${sel.description} &bull; ${sel.rounds.length} rounds &bull; ${sel.timerSeconds}s timer`;
+        descEl.innerHTML = `<strong>${sel.name}</strong> - ${sel.description} | ${sel.rounds.length} rounds | ${sel.timerSeconds}s timer`;
 
-        // High scores
         const hs = $("#high-score-display");
         const entries = Object.entries(highScores);
         if (entries.length > 0) {
@@ -81,6 +80,52 @@
         img.alt = useChanged ? "Changed scene" : "Original scene";
         img.draggable = false;
         container.appendChild(img);
+        return img;
+    }
+
+    // ============ HITBOX POSITIONING ============
+    function positionHitbox(hitboxEl, roundHitbox, imgEl, sceneEl, containerEl) {
+        const sceneW = sceneEl.clientWidth;
+        const sceneH = sceneEl.clientHeight;
+        const imgW = imgEl.naturalWidth;
+        const imgH = imgEl.naturalHeight;
+
+        if (!imgW || !imgH) return;
+
+        const sceneAspect = sceneW / sceneH;
+        const imgAspect = imgW / imgH;
+
+        let renderedW, renderedH, offsetX, offsetY;
+
+        if (imgAspect > sceneAspect) {
+            renderedW = sceneW;
+            renderedH = sceneW / imgAspect;
+            offsetX = 0;
+            offsetY = (sceneH - renderedH) / 2;
+        } else {
+            renderedH = sceneH;
+            renderedW = sceneH * imgAspect;
+            offsetX = (sceneW - renderedW) / 2;
+            offsetY = 0;
+        }
+
+        const containerW = containerEl.clientWidth;
+        const containerH = containerEl.clientHeight;
+
+        const hx = parseFloat(roundHitbox.x) / 100;
+        const hy = parseFloat(roundHitbox.y) / 100;
+        const hw = parseFloat(roundHitbox.w) / 100;
+        const hh = parseFloat(roundHitbox.h) / 100;
+
+        const pixelX = offsetX + renderedW * hx;
+        const pixelY = offsetY + renderedH * hy;
+        const pixelW = renderedW * hw;
+        const pixelH = renderedH * hh;
+
+        hitboxEl.style.left = (pixelX / containerW * 100) + "%";
+        hitboxEl.style.top = (pixelY / containerH * 100) + "%";
+        hitboxEl.style.width = (pixelW / containerW * 100) + "%";
+        hitboxEl.style.height = (pixelH / containerH * 100) + "%";
     }
 
     // ============ GAME FLOW ============
@@ -139,15 +184,14 @@
         const level = LEVELS[selectedLevel];
         const round = level.rounds[currentRound];
 
-        renderScene($("#scene-b"), round, true);
+        const imgEl = renderScene($("#scene-b"), round, true);
 
         const hitbox = $("#hitbox");
-        hitbox.style.left = round.hitbox.x;
-        hitbox.style.top = round.hitbox.y;
-        hitbox.style.width = round.hitbox.w;
-        hitbox.style.height = round.hitbox.h;
         hitbox.className = "hitbox";
         $("#drop-zone-wrong").className = "drop-zone-wrong";
+
+        const sceneEl = $("#scene-b");
+        const containerEl = sceneEl.closest(".image-container");
 
         const panel = $("#categories-panel");
         panel.innerHTML = "";
@@ -161,7 +205,29 @@
             panel.appendChild(card);
         });
 
+        // Make the phase visible BEFORE measuring/positioning the hitbox.
+        // While the phase is hidden (display:none) the scene reports 0 dimensions,
+        // which would make positionHitbox produce NaN and leave the hitbox at its
+        // previous round's position (the cause of mis-aligned, inconsistent hitboxes).
         showPhase("#phase-compare");
+
+        // Remember the current context so the hitbox can be re-positioned on resize.
+        activeHitbox = { hitbox, roundHitbox: round.hitbox, imgEl, sceneEl, containerEl };
+
+        function applyHitbox() {
+            if (!imgEl.naturalWidth) return;
+            // Defer to the next frame so layout has settled (the phase just became
+            // visible) before reading clientWidth/clientHeight.
+            requestAnimationFrame(() => {
+                positionHitbox(hitbox, round.hitbox, imgEl, sceneEl, containerEl);
+            });
+        }
+
+        if (imgEl.complete && imgEl.naturalWidth) {
+            applyHitbox();
+        } else {
+            imgEl.addEventListener("load", applyHitbox);
+        }
 
         gsap.fromTo("#scene-b", { opacity: 0, scale: 0.95 }, { opacity: 1, scale: 1, duration: 0.4 });
         gsap.fromTo(".category-card", { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.3, stagger: 0.08, delay: 0.3 });
@@ -381,6 +447,20 @@
         destroyDraggables();
         renderStartScreen();
         showScreen(screenStart);
+    });
+
+    // Keep the hitbox aligned to the image if the window is resized mid-round.
+    window.addEventListener("resize", () => {
+        const comparePhase = $("#phase-compare");
+        if (activeHitbox && comparePhase && comparePhase.classList.contains("active")) {
+            positionHitbox(
+                activeHitbox.hitbox,
+                activeHitbox.roundHitbox,
+                activeHitbox.imgEl,
+                activeHitbox.sceneEl,
+                activeHitbox.containerEl
+            );
+        }
     });
 
     // Init
