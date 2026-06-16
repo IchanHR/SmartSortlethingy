@@ -15,7 +15,7 @@ const LEVELS = [
             {
                 originalImg: "images/p2-original.png",
                 changedImg: "images/p2-changed.png",
-                hitbox: { x: "66%", y: "30%", w: "16%", h: "14%" },
+                hitbox: { x: "86%", y: "35%", w: "13%", h: "14%" },
                 correctCategory: "Animal",
                 categories: ["Animal", "Vehicle", "Building", "Electronics"]
             }
@@ -52,14 +52,14 @@ const LEVELS = [
             {
                 originalImg: "images/p5-original.png",
                 changedImg: "images/p5-changed.png",
-                hitbox: { x: "40%", y: "42%", w: "12%", h: "15%" },
+                hitbox: { x: "47%", y: "44%", w: "13%", h: "16%" },
                 correctCategory: "Beverage",
                 categories: ["Beverage", "Food", "Furniture", "Electronics"]
             },
             {
                 originalImg: "images/p6-original.png",
                 changedImg: "images/p6-changed.png",
-                hitbox: { x: "63%", y: "8%", w: "16%", h: "18%" },
+                hitbox: { x: "59%", y: "2%", w: "18%", h: "17%" },
                 correctCategory: "Animal",
                 categories: ["Animal", "Plant", "Vehicle", "Electronics"]
             }
@@ -81,7 +81,7 @@ const LEVELS = [
             {
                 originalImg: "images/p8-original.png",
                 changedImg: "images/p8-changed.png",
-                hitbox: { x: "66%", y: "2%", w: "24%", h: "22%" },
+                hitbox: { x: "76%", y: "2%", w: "20%", h: "21%" },
                 correctCategory: "Vehicle",
                 categories: ["Vehicle", "Building", "Animal", "Electronics"]
             },
@@ -103,7 +103,7 @@ const LEVELS = [
             {
                 originalImg: "images/p10-original.png",
                 changedImg: "images/p10-changed.png",
-                hitbox: { x: "26%", y: "36%", w: "36%", h: "34%" },
+                hitbox: { x: "61%", y: "63%", w: "17%", h: "17%" },
                 correctCategory: "Food",
                 categories: ["Food", "Animal", "Plant", "Furniture"]
             },

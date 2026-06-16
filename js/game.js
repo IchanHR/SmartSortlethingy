@@ -449,6 +449,17 @@
         showScreen(screenStart);
     });
 
+    $("#btn-reset").addEventListener("click", () => {
+        AudioManager.click();
+        if (!confirm("Reset all progress? This re-locks every level except Level 1 and clears your best scores.")) return;
+        localStorage.removeItem("ss_unlocked");
+        localStorage.removeItem("ss_highscores");
+        unlockedLevels = [1];
+        highScores = {};
+        selectedLevel = 0;
+        renderStartScreen();
+    });
+
     // Keep the hitbox aligned to the image if the window is resized mid-round.
     window.addEventListener("resize", () => {
         const comparePhase = $("#phase-compare");
